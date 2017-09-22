@@ -11,8 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -164,30 +162,37 @@ public class ExcelIOManager {
 		}
 	}
 	
-	public HashMap<String, String> readData(String filePath) throws Exception {
+	/* public String[][] readData(String filePath) throws Exception { */
+	public ArrayList<String[]> readData(String filePath) throws Exception {
 		/* 엑셀의 파일 모두를 Map으로 전달하기 위한 변수 (상호명, 주소) */
-		HashMap<String, String> datas = new HashMap<String, String>();
 		XSSFRow row = null;
-		XSSFCell name = null;
-		XSSFCell address = null;
-	
+		
 		wb = new XSSFWorkbook(new FileInputStream(filePath));
 		sheet = wb.getSheetAt(0);
 			
 		rows = sheet.getPhysicalNumberOfRows();
 		progress = 0;
 		
+		/* 배열 사용 시 최소 11초 최대 70초 소요 */
+		/* String[][] addArr = new String[rows][2]; */
+		
+		/* ArrayList 사용 시 최소 7초 최대 10초 */
+		ArrayList<String[]> addArr = new ArrayList<String[]>();
+		
 		/* 엑셀 파일들을 1행부터 끝 행까지 모두 Map에 읽어들임 */
 		for(int i=0; i<rows; i++) {
+			String[] tempArr = new String[2];
+			
 			row = sheet.getRow(i);
 			
-			name = row.getCell(0);
-			address = row.getCell(1);
+			/* 이름 */ 
+			tempArr[0] = row.getCell(0).getStringCellValue();
+			tempArr[1] = row.getCell(1).getStringCellValue();
 			
-			datas.put(name.getStringCellValue(), address.getStringCellValue());
+			addArr.add(tempArr);
 		}
 		
-		return datas;
+		return addArr;
 	}
 
 }

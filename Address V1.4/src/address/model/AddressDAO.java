@@ -15,7 +15,6 @@ import java.util.List;
 
 public class AddressDAO {
 	Connection connection = null;
-	Statement state = null;
 	PreparedStatement preState = null;
 	ResultSet set = null;
 	
@@ -25,7 +24,6 @@ public class AddressDAO {
 		factory = new ConnectionFactory();
 		
 		connection = factory.getConnection();
-		state = connection.createStatement();
 	}
 	
 	public String createWhere(String column, String value) {
@@ -134,7 +132,8 @@ public class AddressDAO {
 	
 		
 		try {
-			set = state.executeQuery(createQuery(address));
+			preState = connection.prepareStatement(createQuery(address));
+			set = preState.executeQuery();
 			
 			while(set.next()) {
 				

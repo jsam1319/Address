@@ -6,12 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import javax.swing.text.StyledEditorKit.ForegroundAction;
+
 import address.MainApp;
-import address.model.Address;
 import address.model.AddressDAO;
 import address.model.AddressDTO;
 import address.model.AddressTokenizer;
@@ -51,7 +51,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class MainController implements Initializable{
+public class MainController implements Initializable {
 		
 	
 	/* 변수 선언 부 */
@@ -296,63 +296,53 @@ public class MainController implements Initializable{
 			/* Convert 작업 중 작업량을 확인하기 위하여 스레드를 이용 -> progressIndicator */
 			@Override
 			protected Integer call() throws Exception {
-				AddressTokenizer tokenizer = new AddressTokenizer();
 				AddressDAO dao = new AddressDAO();
 				ExcelIOManager excelManager = new ExcelIOManager();
 				
-				HashMap<String, String> convertDatas = null;
+				/* String[][] convertDatas = null; */
+				ArrayList<String[]> convertDatas = null;
 				
 				int totalCnt = 0;
 				int progressCnt = 0;
 
 				convertDatas = excelManager.readData(pathField.getText());
 
-				/* 반복문을 돌리기 위한 Iterator 정의 */
-				Iterator<String> it = convertDatas.keySet().iterator();
+				totalCnt = convertDatas.size();
 				
-		
-	
-				for(int i=0; i<convertDatas.size(); i++) {
-					progressCnt = convertDatas.size();
-					System.out.println("123456778");
-					while(it.hasNext()) {
-						System.out.println("1234555");
-						String name = it.next();
-						String inputAddress = convertDatas.get(name);	// 변환 전 주소
-						System.out.println("12345");
-						ArrayList<AddressDTO> changes = dao.changeRoad(tokenizer.createVO(inputAddress));
-						
-						totalCnt++;
-						
-						updateProgress(totalCnt, progressCnt);
-						updateMessage(progressCnt + "/" + totalCnt);
-						
-						 /* 복수 주소가 나올 경우를 대비하여 반복문 사용 */
-						for(int j=0; j<changes.size(); j++) {
-							System.out.println(progressCnt + " : " + name + " : " + changes.get(j).getAddress(option));
-							if(!changes.get(j). isComplete()) {
-								fail++;
-								convertAdds.add(new TableDataModel(new SimpleIntegerProperty(progressCnt), 
-																								new SimpleStringProperty(name), 
+				for (String[] addArr : convertDatas) {
+					String name = addArr[0];
+					String inputAddress = addArr[1];	// 변환 전 주소
+					
+					ArrayList<AddressDTO> changes = dao.changeRoad(new AddressTokenizer().createVO(inputAddress));
+					
+					progressCnt++;
+					
+					updateProgress(progressCnt, totalCnt);
+					updateMessage(progressCnt + "/" + totalCnt);
+					
+					 /* 복수 주소가 나올 경우를 대비하여 반복문 사용 */
+					for(int j=0; j<changes.size(); j++) {
+						if(!changes.get(j). isComplete()) {
+							fail++;
+							convertAdds.add(new TableDataModel(new SimpleIntegerProperty(progressCnt), 
+																								 new SimpleStringProperty(name), 
 																								/* 변환 실패 시 받은 주소를 그대로 넘겨준다 */
-																								new SimpleStringProperty(inputAddress), 
-																								new SimpleStringProperty("-----")));
-								dtos.add(changes.get(j));
+																								 new SimpleStringProperty(inputAddress), 
+																								 new SimpleStringProperty("-----")));
+							dtos.add(changes.get(j));
 							}
-								
-							else {
+							
+						else {
 								success++;
 								
 								convertAdds.add(new TableDataModel(new SimpleIntegerProperty(progressCnt), 
-																								new SimpleStringProperty(name), 
-																								new SimpleStringProperty(changes.get(j).getAddress(option)), 
-																								new SimpleStringProperty(changes.get(j).getPostal())));
+																									 new SimpleStringProperty(name), 
+																									 new SimpleStringProperty(changes.get(j).getAddress(option)), 
+																									 new SimpleStringProperty(changes.get(j).getPostal())));
 								dtos.add(changes.get(j));
 							}
 						}
-					}	
-				}
-				
+					}
 				table.setItems(convertAdds);
 				
 				return totalCnt;
@@ -384,7 +374,7 @@ public class MainController implements Initializable{
 		        
 		        end = System.currentTimeMillis();
 		        
-		        System.out.println("시간 : " + (end - start) / 1000 + "소요");
+		        System.out.println("시간 : " + (end - start) / 1000 + " 초 소요");
 			}		
 		};
 		
@@ -420,19 +410,7 @@ public class MainController implements Initializable{
 		
 		addressLabel.setText(dtos.get(0).getAddress(option));
 		
-		if(dtos.get(0).getSiDo() == null) 					dtos.get(0).setSiDo(" ");
-		if(dtos.get(0).getSiGoonGoo() == null) 			dtos.get(0).setSiGoonGoo(" ");
-		if(dtos.get(0).getEupMyunDong() == null) 	dtos.get(0).setEupMyunDong(" ");
-		if(dtos.get(0).getDoro() == null) 					dtos.get(0).setDoro(" ");
-		if(dtos.get(0).getBuildName() == null) 			dtos.get(0).setBuildName(" ");
-		if(dtos.get(0).getBuildMain() == null) 			dtos.get(0).setBuildMain(" ");
-		if(dtos.get(0).getBuildSub() == null || 
-		   dtos.get(0).getBuildSub().equals("0")) 		dtos.get(0).setBuildSub(" ");
-		if(dtos.get(0).getPostal() == null) 					dtos.get(0).setPostal(" ");
-		if(dtos.get(0).getEtc() == null)						dtos.get(0).setEtc(" ");
-		if(dtos.get(0).getDong() == null)					dtos.get(0).setDong(" ");
-		if(dtos.get(0).getHo() == null)						dtos.get(0).setHo(" ");
-		
+
 		singleSidoField.setText(dtos.get(0).getSiDo());
 		singleSigoongooField.setText(dtos.get(0).getSiGoonGoo());
 		singleEupField.setText(dtos.get(0).getEupMyunDong());
@@ -499,7 +477,7 @@ public class MainController implements Initializable{
 		option.setBuild(buildCheck.isSelected());
 		
 		
-		if(dto.isComplete()) {
+		if(!dto.isComplete()) {
 			siDoField.setText("");
 			siGoonGooField.setText("");
 			eupMyunDongField.setText("");
@@ -516,20 +494,6 @@ public class MainController implements Initializable{
 			
 			return;
 		}
-		
-		/* 중복 코드를 제거하는 방법에 대해서 생각해 볼 것 */
-		if(dtos.get(0).getSiDo() == null) 					dtos.get(0).setSiDo(" ");
-		if(dtos.get(0).getSiGoonGoo() == null) 			dtos.get(0).setSiGoonGoo(" ");
-		if(dtos.get(0).getEupMyunDong() == null) 	dtos.get(0).setEupMyunDong(" ");
-		if(dtos.get(0).getDoro() == null) 					dtos.get(0).setDoro(" ");
-		if(dtos.get(0).getBuildName() == null) 			dtos.get(0).setBuildName(" ");
-		if(dtos.get(0).getBuildMain() == null) 			dtos.get(0).setBuildMain(" ");
-		if(dtos.get(0).getBuildSub() == null || 
-		   dtos.get(0).getBuildSub().equals("0")) 		dtos.get(0).setBuildSub(" ");
-		if(dtos.get(0).getPostal() == null) 					dtos.get(0).setPostal(" ");
-		if(dtos.get(0).getEtc() == null)						dtos.get(0).setEtc(" ");
-		if(dtos.get(0).getDong() == null)					dtos.get(0).setDong(" ");
-		if(dtos.get(0).getHo() == null)						dtos.get(0).setHo(" ");
 		
 		siDoField.setText(dto.getSiDo());
 		siGoonGooField.setText(dto.getSiGoonGoo());
@@ -556,35 +520,31 @@ public class MainController implements Initializable{
 	private void handleModify() {
 		StringBuilder builder = new StringBuilder();
 		
-		builder.append(siDoField.getText());		builder.append(" ");
-		builder.append(siGoonGooField.getText());	builder.append(" ");
-		if(eupMyunDongField.getText().length() > 2) {
-			builder.append(eupMyunDongField.getText());		builder.append(" "); 
-		}
-		builder.append(doroField.getText());		builder.append(" ");
+		builder.append(siDoField.getText());							builder.append(" ");
+		builder.append(siGoonGooField.getText());				builder.append(" ");
+		builder.append(eupMyunDongField.getText());			builder.append(" "); 
+		builder.append(doroField.getText());							builder.append(" ");
 		builder.append(mainBuildField.getText());	
 		if(subBuildField.getText().length() > 1) {
 			builder.append("-");
 			builder.append(subBuildField.getText()); 
 		}
-		builder.append(" ");
-		builder.append("(");	builder.append(sbField.getText());	builder.append(")");
 		
-		if(etcField.getText().length() > 2) {
+		if(sbField.getText().length()  > 1) {
+			builder.append(" ");
+			builder.append("(");	builder.append(sbField.getText());	builder.append(")");
+		}
+		
+		if(etcField.getText().length() > 1) {
 			builder.append(" ");
 			builder.append("(");	builder.append(etcField.getText());	builder.append(")");
 		}
 		
-		if(dongField.getText().length() > 2) {
-			builder.append(" ");
-			builder.append(dongField.getText());
-		}
+		builder.append(" ");
+		builder.append(dongField.getText());
 		
-		if(hoField.getText().length() > 2) {
-			builder.append(" ");
-			builder.append(etcField.getText());
-		}
-			
+		builder.append(" ");
+		builder.append(etcField.getText());
 		
 		TableViewSelectionModel selection = table.getSelectionModel();
 
@@ -625,6 +585,7 @@ public class MainController implements Initializable{
 		describeLabel.setText("");
 	}
 }
+
 
 /*
 @FXML
@@ -790,7 +751,18 @@ private void handleSaveAs() {
     	ee.printStackTrace();
     }
 	
-
-}
-*/
+		/*
+		if(dtos.get(0).getSiDo() == null) 					dtos.get(0).setSiDo(" ");
+		if(dtos.get(0).getSiGoonGoo() == null) 			dtos.get(0).setSiGoonGoo(" ");
+		if(dtos.get(0).getEupMyunDong() == null) 	dtos.get(0).setEupMyunDong(" ");
+		if(dtos.get(0).getDoro() == null) 					dtos.get(0).setDoro(" ");
+		if(dtos.get(0).getBuildName() == null) 			dtos.get(0).setBuildName(" ");
+		if(dtos.get(0).getBuildMain() == null) 			dtos.get(0).setBuildMain(" ");
+		if(dtos.get(0).getBuildSub() == null || 
+		   dtos.get(0).getBuildSub().equals("0")) 		dtos.get(0).setBuildSub(" ");
+		if(dtos.get(0).getPostal() == null) 					dtos.get(0).setPostal(" ");
+		if(dtos.get(0).getEtc() == null)						dtos.get(0).setEtc(" ");
+		if(dtos.get(0).getDong() == null)					dtos.get(0).setDong(" ");
+		if(dtos.get(0).getHo() == null)						dtos.get(0).setHo(" ");
+		*/
 

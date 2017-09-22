@@ -1,10 +1,10 @@
-package address.model;
+ï»¿package address.model;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
 public class AddressTokenizer {
-	/* Áö¹ø ÁÖ¼Ò */
+	/* ì§€ë²ˆ ì£¼ì†Œ */
 	String siDo = "";
 	String siGoon = "";
 	String goo = "";
@@ -13,7 +13,7 @@ public class AddressTokenizer {
 	String jibunMain = "";
 	String jibunSub = "";
 	
-	/* µµ·Î¸í ÁÖ¼Ò */
+	/* ë„ë¡œëª… ì£¼ì†Œ */
 	String doro = "";
 	String buildMain = "";
 	String buildSub = "";
@@ -23,60 +23,61 @@ public class AddressTokenizer {
 	
 	String etc = "";
 	
+	
+	
+	@Override
+	public String toString() {
+		return "AddressTokenizer [siDo=" + siDo + ", siGoon=" + siGoon + ", goo=" + goo + ", eupMyunDong=" + eupMyunDong
+				+ ", ri=" + ri + ", jibunMain=" + jibunMain + ", jibunSub=" + jibunSub + ", doro=" + doro
+				+ ", buildMain=" + buildMain + ", buildSub=" + buildSub + ", dong=" + dong + ", ho=" + ho + ", etc="
+				+ etc + "]";
+	}
+
+
 	public Address createVO(String address) {
 		
-		/* ÁÖ¼Ò¸¦ °ø¹éÀ¸·Î ³ª´©¾î ´ÜÀ§·Î ±¸º°ÇÑ´Ù. */
+		/* ì£¼ì†Œë¥¼ ê³µë°±ìœ¼ë¡œ ë‚˜ëˆ„ì–´ ë‹¨ìœ„ë¡œ êµ¬ë³„í•œë‹¤. */
 		StringTokenizer token = new StringTokenizer(address, " ");
 		
-		String unit = token.nextToken();
-			
-		/* µµ ±¸ºĞ */
-		findSiDo(unit);
-		if(!siDo.equals("")) unit = token.nextToken();
-			
-		/* ½Ã ±º ±¸ºĞ */
-		findSiGoon(unit);
-		if(!siGoon.equals("")) unit = token.nextToken();
 		
-		/* ±¸ ±¸ºĞ */
-		findGoo(unit);
-		if(!goo.equals("")) unit = token.nextToken();
-		
-		/* À¾ ¸é µ¿ ±¸ºĞ */
-		findEupMyunDong(unit);
-		if(!eupMyunDong.equals("")) unit = token.nextToken();
-		
-		/* ¸® ±¸ºĞ */
-		findRi(unit);
-		if(!ri.equals("")) unit = token.nextToken();
-		
-		/* Áö¹ø ±¸ºĞ*/
-		findJibun(unit);
-		if(!jibunMain.equals("")) unit = token.nextToken();
-		
-		
-		/* µµ·Î¸í ±¸ºĞ */
-		findDoro(unit);
-		if(!doro.equals("")) unit = token.nextToken();
-		
-		/* °Ç¹° ±¸ºĞ */
-		findBuild(unit);
-		if(!buildMain.equals("")) unit = token.nextToken();
-		
-		/* ¾ÆÆÄÆ® µ¿ ±¸ºĞ */
-		findDong(unit);
-		if(!dong.equals("")) unit = token.nextToken();
-			
-		/* ¾ÆÆÄÆ® È£ ±¸ºĞ */
-		findHo(unit);
-		if(!ho.equals("")) unit = token.nextToken();
-			
 		while(token.hasMoreTokens()) {
-			findEtc(unit);
-			unit = token.nextToken();
-		}
-	
+			String unit = token.nextToken();
+			
+			/* ë„ êµ¬ë¶„ */
+			findSiDo(unit);
+			
+			/* ì‹œ êµ° êµ¬ë¶„ */
+			findSiGoon(unit);
+			
+			/* êµ¬ êµ¬ë¶„ */
+			findGoo(unit);
+			
+			/* ì ë©´ ë™ êµ¬ë¶„ */
+			findEupMyunDong(unit);
+			
+			/* ë¦¬ êµ¬ë¶„ */
+			findRi(unit);
+			
+			/* ì§€ë²ˆ êµ¬ë¶„*/
+			findJibun(unit);
+			
+			/* ë„ë¡œëª… êµ¬ë¶„ */
+			findDoro(unit);
 		
+			/* ê±´ë¬¼ êµ¬ë¶„ */
+			findBuild(unit);
+			
+			/* ì•„íŒŒíŠ¸ ë™ êµ¬ë¶„ */
+			findDong(unit);
+			
+			/* ì•„íŒŒíŠ¸ í˜¸ êµ¬ë¶„ */
+			findHo(unit);
+			
+			/* ë‚˜ë¨¸ì§€ ì£¼ì†Œ êµ¬ë¶„ */
+//			findEtc(unit);
+		}
+		/* ë„ êµ¬ë¶„ */
+	
 
 		return new Address.Builder()
 				.siDo(siDo)
@@ -96,71 +97,71 @@ public class AddressTokenizer {
 	
 	private void findSiDo(String unit) {
 		/*
-		 * ÀÔ·Â ½Ã "¼­¿ï½Ã"¿Í "¼­¿ïÆ¯º°½Ã" µîÀ» ±¸º° ÇÏ±â À§ÇÏ¿©
-		 * ÁÙÀÓ¸»À» Å°·Î Á¤½Ä ÀÌ¸§À» °ªÀ¸·Î ³Ö¾î¼­ °ü¸®ÇÑ´Ù.
+		 * ì…ë ¥ ì‹œ "ì„œìš¸ì‹œ"ì™€ "ì„œìš¸íŠ¹ë³„ì‹œ" ë“±ì„ êµ¬ë³„ í•˜ê¸° ìœ„í•˜ì—¬
+		 * ì¤„ì„ë§ì„ í‚¤ë¡œ ì •ì‹ ì´ë¦„ì„ ê°’ìœ¼ë¡œ ë„£ì–´ì„œ ê´€ë¦¬í•œë‹¤.
 		 */
 		HashMap<String, String> doMap = new HashMap<String, String>();
 		
-		doMap.put("¼­¿ï", "¼­¿ïÆ¯º°½Ã");		doMap.put("¼­¿ï½Ã", "¼­¿ïÆ¯º°½Ã");	
-		doMap.put("°­¿ø", "°­¿øµµ");
-		doMap.put("°æ±â", "°æ±âµµ");
-		doMap.put("°æ³²", "°æ»ó³²µµ");
-		doMap.put("°æºÏ", "°æ»óºÏµµ");
-		doMap.put("±¤ÁÖ", "±¤ÁÖ±¤¿ª½Ã");
-		doMap.put("´ë±¸", "´ë±¸±¤¿ª½Ã");
-		doMap.put("´ëÀü", "´ëÀü±¤¿ª½Ã;");		doMap.put("´ëÀü½Ã", "´ëÀü±¤¿ª½Ã;");
-		doMap.put("ºÎ»ê", "ºÎ»ê±¤¿ª½Ã");		doMap.put("ºÎ»ê½Ã", "ºÎ»ê±¤¿ª½Ã");
-		doMap.put("¼¼Á¾", "¼¼Á¾Æ¯º°ÀÚÄ¡½Ã");	doMap.put("¼¼Á¾½Ã", "¼¼Á¾Æ¯º°ÀÚÄ¡½Ã");	doMap.put("¼¼Á¾Æ¯º°½Ã", "¼¼Á¾Æ¯º°ÀÚÄ¡½Ã");
-		doMap.put("¿ï»ê", "¿ï»ê±¤¿ª½Ã");		doMap.put("¿ï»ê½Ã", "¿ï»ê±¤¿ª½Ã");
-		doMap.put("ÀÎÃµ", "ÀÎÃµ±¤¿ª½Ã"); 		doMap.put("ÀÎÃµ½Ã", "ÀÎÃµ±¤¿ª½Ã");
-		doMap.put("Àü³²", "Àü¶ó³²µµ");
-		doMap.put("ÀüºÏ", "Àü¶óºÏµµ");
-		doMap.put("Á¦ÁÖ", "Á¦ÁÖÆ¯º°ÀÚÄ¡µµ");	doMap.put("Á¦ÁÖµµ", "Á¦ÁÖÆ¯º°ÀÚÄ¡µµ");
-		doMap.put("Ãæ³²", "ÃæÃ»³²µµ");
-		doMap.put("ÃæºÏ", "ÃæÃ»ºÏµµ");
+		doMap.put("ì„œìš¸", "ì„œìš¸íŠ¹ë³„ì‹œ");		doMap.put("ì„œìš¸ì‹œ", "ì„œìš¸íŠ¹ë³„ì‹œ");	
+		doMap.put("ê°•ì›", "ê°•ì›ë„");
+		doMap.put("ê²½ê¸°", "ê²½ê¸°ë„");
+		doMap.put("ê²½ë‚¨", "ê²½ìƒë‚¨ë„");
+		doMap.put("ê²½ë¶", "ê²½ìƒë¶ë„");
+		doMap.put("ê´‘ì£¼", "ê´‘ì£¼ê´‘ì—­ì‹œ");
+		doMap.put("ëŒ€êµ¬", "ëŒ€êµ¬ê´‘ì—­ì‹œ");
+		doMap.put("ëŒ€ì „", "ëŒ€ì „ê´‘ì—­ì‹œ;");		doMap.put("ëŒ€ì „ì‹œ", "ëŒ€ì „ê´‘ì—­ì‹œ;");
+		doMap.put("ë¶€ì‚°", "ë¶€ì‚°ê´‘ì—­ì‹œ");		doMap.put("ë¶€ì‚°ì‹œ", "ë¶€ì‚°ê´‘ì—­ì‹œ");
+		doMap.put("ì„¸ì¢…", "ì„¸ì¢…íŠ¹ë³„ìì¹˜ì‹œ");	doMap.put("ì„¸ì¢…ì‹œ", "ì„¸ì¢…íŠ¹ë³„ìì¹˜ì‹œ");	doMap.put("ì„¸ì¢…íŠ¹ë³„ì‹œ", "ì„¸ì¢…íŠ¹ë³„ìì¹˜ì‹œ");
+		doMap.put("ìš¸ì‚°", "ìš¸ì‚°ê´‘ì—­ì‹œ");		doMap.put("ìš¸ì‚°ì‹œ", "ìš¸ì‚°ê´‘ì—­ì‹œ");
+		doMap.put("ì¸ì²œ", "ì¸ì²œê´‘ì—­ì‹œ"); 		doMap.put("ì¸ì²œì‹œ", "ì¸ì²œê´‘ì—­ì‹œ");
+		doMap.put("ì „ë‚¨", "ì „ë¼ë‚¨ë„");
+		doMap.put("ì „ë¶", "ì „ë¼ë¶ë„");
+		doMap.put("ì œì£¼", "ì œì£¼íŠ¹ë³„ìì¹˜ë„");	doMap.put("ì œì£¼ë„", "ì œì£¼íŠ¹ë³„ìì¹˜ë„");
+		doMap.put("ì¶©ë‚¨", "ì¶©ì²­ë‚¨ë„");
+		doMap.put("ì¶©ë¶", "ì¶©ì²­ë¶ë„");
 		
-		if(doMap.containsValue(unit))					siDo = unit; 							
-		else if(doMap.containsKey(unit))				siDo = doMap.get(unit);			
+		if(doMap.containsValue(unit))							siDo = unit; 							
+		else if(doMap.containsKey(unit))					siDo = doMap.get(unit);			
 																															
-		else if(unit.equals("±¤ÁÖ½Ã")) {															// °æ±âµµ ±¤ÁÖ½Ã¿Í ±¸ºĞ
-			if(siDo.equals("°æ±âµµ"))								siGoon = "±¤ÁÖ½Ã";
-			else 																	siDo = "±¤ÁÖ±¤¿ª½Ã";
+		else if(unit.equals("ê´‘ì£¼ì‹œ")) {															// ê²½ê¸°ë„ ê´‘ì£¼ì‹œì™€ êµ¬ë¶„
+			if(siDo.equals("ê²½ê¸°ë„"))								siGoon = "ê´‘ì£¼ì‹œ";
+			else 																siDo = "ê´‘ì£¼ê´‘ì—­ì‹œ";
 		}
 	}
 	
 	private void findSiGoon(String unit) {
-		/* ½Ã ±ºÀÇ Á¤±Ô Ç¥Çö½ÄÀ¸·Î ½Ã ±º ±¸ºĞ */
-		if(unit.matches("[°¡-ÆR]*[½Ã±º]")) siGoon = unit;
+		/* ì‹œ êµ°ì˜ ì •ê·œ í‘œí˜„ì‹ìœ¼ë¡œ ì‹œ êµ° êµ¬ë¶„ */
+		if(unit.matches("[ê°€-í£]*[ì‹œêµ°]")) siGoon = unit;
 	}
 	
 	private void findGoo(String unit) {
-		/* ½Ã ±ºÀÇ Á¤±Ô Ç¥Çö½ÄÀ¸·Î ½Ã ±º ±¸ºĞ */
-		if(unit.matches("[°¡-ÆR]*[±¸]")) goo = unit;
+		/* ì‹œ êµ°ì˜ ì •ê·œ í‘œí˜„ì‹ìœ¼ë¡œ ì‹œ êµ° êµ¬ë¶„ */
+		if(unit.matches("[ê°€-í£]*[êµ¬]")) goo = unit;
 	}
  
 	private void findRi(String unit) {
-		if(unit.matches("[°¡-ÆR]*¸®")) ri = unit;
+		if(unit.matches("[ê°€-í£]*ë¦¬")) ri = unit;
 	}
 	
 	private void findEupMyunDong(String unit) {
-		if(unit.matches("[°¡-ÆR]*[À¾¸éµ¿°¡]")) eupMyunDong = unit;
+		if(unit.matches("[ê°€-í£]*[ìë©´ë™ê°€]")) eupMyunDong = unit;
 	}
 	
 	private void findDoro(String unit) {
-		if(unit.matches("[°¡-ÆR0-9]*[·Î±æ]")) doro = unit;
+		if(unit.matches("[ê°€-í£0-9]*[ë¡œê¸¸]")) doro = unit;
 		
-		/* µµ·Î¸í ÁÖ¼Ò µÚ °Ç¹° º»¹ø°ú ºÎ¹øÀÌ ºÙ¾î ÀÖ´Â °æ¿ì */
-		else if(unit.matches("[°¡-ÆR0-9]*[·Î±æ][0-9]*?-?[0-9]*")) {
-			findBuild(unit.split("[·Î±æ]")[1]);
-		}
+/*		 ë„ë¡œëª… ì£¼ì†Œ ë’¤ ê±´ë¬¼ ë³¸ë²ˆê³¼ ë¶€ë²ˆì´ ë¶™ì–´ ìˆëŠ” ê²½ìš° 
+		else if(unit.matches("[ê°€-í£0-9]*[ë¡œê¸¸][0-9]*?-?[0-9]*")) {
+			findBuild(unit.split("[ë¡œê¸¸]")[1]);
+		}*/
 	}
 	
 	private void findDong(String unit) {
-		if(unit.matches("[0-9]*µ¿")) dong = unit;
+		if(unit.matches("[0-9]*ë™")) dong = unit;
 	}
 	
 	private void findHo(String unit) {
-		if(unit.matches("[0-9]*È£")) ho = unit;
+		if(unit.matches("[0-9]*í˜¸")) ho = unit;
 	}
 	
 	private void findEtc(String unit) {
@@ -171,30 +172,50 @@ public class AddressTokenizer {
 	
 	
 	private void findJibun(String unit) {
-		/* Áö¹ø ÁÖ¼Ò¸¦ "-"À» ±âÁØÀ¸·Î ³ª´® */
+		if(!unit.matches("[0-9]+?-?[0-9]*?[ë²ˆì§€]*")) return;
+		
+		/* ì§€ë²ˆ ì£¼ì†Œë¥¼ "-"ì„ ê¸°ì¤€ìœ¼ë¡œ ë‚˜ëˆ” */
 		String tokenArr[] = unit.split("-");
 	
-		/* Áö¹øºÎ¹øÀÌ ¾øÀ» °æ¿ì */
+		/* ì§€ë²ˆë¶€ë²ˆì´ ì—†ì„ ê²½ìš° */
 		if(tokenArr.length != 2) {
-			jibunMain = tokenArr[0];
-			/* Áö¹ø ºÎ¹øÀ» 0À¸·Î ¸¸µé¾î ÁÜ */
-			jibunSub = "0";
+			if(tokenArr[0].matches("[0-9]*")) { 
+				jibunMain = tokenArr[0];
+				/* ì§€ë²ˆ ë¶€ë²ˆì„ 0ìœ¼ë¡œ ë§Œë“¤ì–´ ì¤Œ */
+				jibunSub = "0";
+			}
+			
+			else {
+				StringBuilder builder = new StringBuilder();
+
+				for(int i=0; i<tokenArr[0].length(); i++) {
+					/* ìˆ«ìì¼ ê²½ìš° */
+					if(tokenArr[0].charAt(i) >= '0' && tokenArr[0].charAt(i) <= '9')
+						builder.append(tokenArr[0].charAt(i));
+					else break;	
+				}
+				
+				jibunMain = builder.toString();
+				jibunSub = "0";
+			}
+			
+			
 		}
 		
-		/* Áö¹ø ºÎ¹øÀÌ ÀÖÀ» °æ¿ì */
+		/* ì§€ë²ˆ ë¶€ë²ˆì´ ìˆì„ ê²½ìš° */
 		else if(tokenArr.length == 2) {
 			jibunMain = tokenArr[0];
 			
-			/* Áö¹ø ºÎ¹ø µÚ¿¡ ¹®ÀÚ¿­ÀÌ ¾øÀ» °æ¿ì */
-			if(jibunSub.matches("[0-9}*")) jibunSub = tokenArr[1];
+			/* ì§€ë²ˆ ë¶€ë²ˆ ë’¤ì— ë¬¸ìì—´ì´ ì—†ì„ ê²½ìš° */
+			if(jibunSub.matches("[0-9]*")) jibunSub = tokenArr[1];
 			
-			/* Áö¹ø ºÎ¹ø µÚ¿¡ ¹®ÀÚ¿­ÀÌ ÀÖÀ» °æ¿ì */
+			/* ì§€ë²ˆ ë¶€ë²ˆ ë’¤ì— ë¬¸ìì—´ì´ ìˆì„ ê²½ìš° */
 			else {
 				StringBuilder builder = new StringBuilder();
 
 				for(int i=0; i<tokenArr[1].length(); i++) {
-					/* ¼ıÀÚÀÏ °æ¿ì */
-					if(tokenArr[1].charAt(i) > '0' && tokenArr[1].charAt(i) < '9')
+					/* ìˆ«ìì¼ ê²½ìš° */
+					if(tokenArr[1].charAt(i) >= '0' && tokenArr[1].charAt(i) <= '9')
 						builder.append(tokenArr[1].charAt(i));
 					else break;	
 				}
@@ -206,36 +227,56 @@ public class AddressTokenizer {
 	}
 	
 	private void findBuild(String unit) {
-		/* Áö¹ø ÁÖ¼Ò¸¦ "-"À» ±âÁØÀ¸·Î ³ª´® */
+		if(!unit.matches(	"[0-9]+?-?[0-9]*?[ë²ˆì§€]*")) return;
+
+		/* ê±´ë¬¼ ì£¼ì†Œë¥¼ "-"ì„ ê¸°ì¤€ìœ¼ë¡œ ë‚˜ëˆ” */
 		String tokenArr[] = unit.split("-");
-	
-		/* Áö¹øºÎ¹øÀÌ ¾øÀ» °æ¿ì */
+
+		/* ê±´ë¬¼ë¶€ë²ˆì´ ì—†ì„ ê²½ìš° */
 		if(tokenArr.length != 2) {
-			buildMain = tokenArr[0];
-			/* Áö¹ø ºÎ¹øÀ» 0À¸·Î ¸¸µé¾î ÁÜ */
-			buildSub = "0";
+			if(tokenArr[0].matches("[0-9]*")) { 
+				buildMain = tokenArr[0];
+				/* ì§€ë²ˆ ë¶€ë²ˆì„ 0ìœ¼ë¡œ ë§Œë“¤ì–´ ì¤Œ */
+				buildSub = "0";
+			}
+			
+			else {
+				StringBuilder builder = new StringBuilder();
+
+				for(int i=0; i<tokenArr[0].length(); i++) {
+					/* ìˆ«ìì¼ ê²½ìš° */
+					if(tokenArr[0].charAt(i) >= '0' && tokenArr[0].charAt(i) <= '9')
+						builder.append(tokenArr[0].charAt(i));
+					else break;	
+				}
+				
+				buildMain = builder.toString();
+				buildSub = "0";
+			}
 		}
 		
-		/* Áö¹ø ºÎ¹øÀÌ ÀÖÀ» °æ¿ì */
+		/* ê±´ë¬¼ ë¶€ë²ˆì´ ìˆì„ ê²½ìš° */
 		else if(tokenArr.length == 2) {
 			buildMain = tokenArr[0];
 			
-			/* Áö¹ø ºÎ¹ø µÚ¿¡ ¹®ÀÚ¿­ÀÌ ¾øÀ» °æ¿ì */
-			if(buildSub.matches("[0-9}*")) buildSub = tokenArr[1];
+			/* ê±´ë¬¼ ë¶€ë²ˆ ë’¤ì— ë¬¸ìì—´ì´ ì—†ì„ ê²½ìš° */
+			if(buildSub.matches("[0-9]*")) buildSub = tokenArr[1];
 			
-			/* Áö¹ø ºÎ¹ø µÚ¿¡ ¹®ÀÚ¿­ÀÌ ÀÖÀ» °æ¿ì */
+			/* ê±´ë¬¼ ë¶€ë²ˆ ë’¤ì— ë¬¸ìì—´ì´ ìˆì„ ê²½ìš° */
 			else {
 				StringBuilder builder = new StringBuilder();
 
 				for(int i=0; i<tokenArr[1].length(); i++) {
-					/* ¼ıÀÚÀÏ °æ¿ì */
-					if(tokenArr[1].charAt(i) > '0' && tokenArr[1].charAt(i) < '9')
+					/* ìˆ«ìì¼ ê²½ìš° */
+					if(tokenArr[1].charAt(i) >= '0' && tokenArr[1].charAt(i) <= '9')
 						builder.append(tokenArr[1].charAt(i));
 					else break;	
 				}
 				
 				buildSub = builder.toString();
 			}
+			
+			
 		}
 		
 	}
